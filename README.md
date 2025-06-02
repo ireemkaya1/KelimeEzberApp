@@ -24,7 +24,7 @@
 
 ## 🖼️ Ekran Görüntüleri
 
-> `screenshots/` klasörüne uygulamadan ekran görüntüleri eklenebilir.
+> Scrum Table ekran görüntüleri dosyanın içinde paylaşılmıştır.
 
 ---
 
