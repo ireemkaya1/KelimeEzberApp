@@ -40,7 +40,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(295, 77);
+            this.label1.Location = new System.Drawing.Point(117, 155);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 13);
             this.label1.TabIndex = 0;
@@ -48,7 +48,7 @@
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(379, 77);
+            this.txtUsername.Location = new System.Drawing.Point(216, 148);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(100, 20);
             this.txtUsername.TabIndex = 1;
@@ -56,7 +56,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(295, 123);
+            this.label2.Location = new System.Drawing.Point(153, 180);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 13);
             this.label2.TabIndex = 0;
@@ -64,7 +64,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(379, 123);
+            this.txtPassword.Location = new System.Drawing.Point(216, 177);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(100, 20);
@@ -72,7 +72,7 @@
             // 
             // btnRegister
             // 
-            this.btnRegister.Location = new System.Drawing.Point(346, 194);
+            this.btnRegister.Location = new System.Drawing.Point(346, 167);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(75, 23);
             this.btnRegister.TabIndex = 2;
@@ -82,7 +82,7 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(346, 232);
+            this.btnLogin.Location = new System.Drawing.Point(427, 167);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 2;
@@ -92,7 +92,7 @@
             // 
             // btnForgotPassword
             // 
-            this.btnForgotPassword.Location = new System.Drawing.Point(334, 271);
+            this.btnForgotPassword.Location = new System.Drawing.Point(508, 167);
             this.btnForgotPassword.Name = "btnForgotPassword";
             this.btnForgotPassword.Size = new System.Drawing.Size(102, 23);
             this.btnForgotPassword.TabIndex = 2;

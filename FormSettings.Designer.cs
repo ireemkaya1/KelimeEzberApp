@@ -73,8 +73,9 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Kaydet";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // nudNewWordLimit
+            // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -82,7 +83,7 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.nudNewWordLimit1);
             this.Controls.Add(this.lblLimitInfo);
-            this.Name = "nudNewWordLimit";
+            this.Name = "FormSettings";
             ((System.ComponentModel.ISupportInitialize)(this.nudNewWordLimit1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

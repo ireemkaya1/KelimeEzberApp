@@ -42,7 +42,6 @@
             this.pbImage = new System.Windows.Forms.PictureBox();
             this.btnSelectImage = new System.Windows.Forms.Button();
             this.btnSaveWord = new System.Windows.Forms.Button();
-            this.btnStartTest = new System.Windows.Forms.Button();
             this.cmbCategory = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbImage)).BeginInit();
@@ -87,7 +86,8 @@
             this.lblSentence1.Name = "lblSentence1";
             this.lblSentence1.Size = new System.Drawing.Size(45, 13);
             this.lblSentence1.TabIndex = 0;
-            this.lblSentence1.Text = "Cümle 1\n";            // 
+            this.lblSentence1.Text = "Cümle 1\n";
+            // 
             // txtSentence1
             // 
             this.txtSentence1.Location = new System.Drawing.Point(223, 111);
@@ -102,7 +102,8 @@
             this.lblSentence2.Name = "lblSentence2";
             this.lblSentence2.Size = new System.Drawing.Size(45, 13);
             this.lblSentence2.TabIndex = 0;
-            this.lblSentence2.Text = "Cümle 2";            // 
+            this.lblSentence2.Text = "Cümle 2";
+            // 
             // txtSentence2
             // 
             this.txtSentence2.Location = new System.Drawing.Point(223, 137);
@@ -117,7 +118,8 @@
             this.lblSentence3.Name = "lblSentence3";
             this.lblSentence3.Size = new System.Drawing.Size(45, 13);
             this.lblSentence3.TabIndex = 0;
-            this.lblSentence3.Text = "Cümle 3";            // 
+            this.lblSentence3.Text = "Cümle 3";
+            // 
             // txtSentence3
             // 
             this.txtSentence3.Location = new System.Drawing.Point(223, 163);
@@ -162,16 +164,6 @@
             this.btnSaveWord.UseVisualStyleBackColor = true;
             this.btnSaveWord.Click += new System.EventHandler(this.btnSaveWord_Click);
             // 
-            // btnStartTest
-            // 
-            this.btnStartTest.Location = new System.Drawing.Point(221, 338);
-            this.btnStartTest.Name = "btnStartTest";
-            this.btnStartTest.Size = new System.Drawing.Size(102, 44);
-            this.btnStartTest.TabIndex = 4;
-            this.btnStartTest.Text = "Teste Başla";
-            this.btnStartTest.UseVisualStyleBackColor = true;
-            this.btnStartTest.Click += new System.EventHandler(this.btnStartTest_Click);
-            // 
             // cmbCategory
             // 
             this.cmbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -198,7 +190,6 @@
             this.ClientSize = new System.Drawing.Size(782, 450);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmbCategory);
-            this.Controls.Add(this.btnStartTest);
             this.Controls.Add(this.btnSaveWord);
             this.Controls.Add(this.btnSelectImage);
             this.Controls.Add(this.pbImage);
@@ -238,7 +229,6 @@
         private System.Windows.Forms.PictureBox pbImage;
         private System.Windows.Forms.Button btnSelectImage;
         private System.Windows.Forms.Button btnSaveWord;
-        private System.Windows.Forms.Button btnStartTest;
         private System.Windows.Forms.ComboBox cmbCategory;
         private System.Windows.Forms.Label label1;
     }

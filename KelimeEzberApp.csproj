@@ -57,6 +57,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormImageUpdater.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormImageUpdater.Designer.cs">
+      <DependentUpon>FormImageUpdater.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormKelimeEkle.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +97,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormImageUpdater.resx">
+      <DependentUpon>FormImageUpdater.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormKelimeEkle.resx">
       <DependentUpon>FormKelimeEkle.cs</DependentUpon>

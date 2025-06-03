@@ -1,14 +1,8 @@
-﻿// FormKelimeEkle.cs
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace KelimeEzberApp
 {
@@ -42,6 +36,7 @@ namespace KelimeEzberApp
             }
 
             string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string imagePath = pbImage.ImageLocation != null ? System.IO.Path.GetFileName(pbImage.ImageLocation) : "";
 
             try
             {
@@ -49,7 +44,9 @@ namespace KelimeEzberApp
                 {
                     conn.Open();
 
-                    string query = @"INSERT INTO Words (English, Turkish, Sentence1, Sentence2, Sentence3, ImagePath, Category) VALUES (@e, @t, @s1, @s2, @s3, @img, @cat)";
+                    string query = @"INSERT INTO Words 
+                                    (English, Turkish, Sentence1, Sentence2, Sentence3, ImagePath, Category) 
+                                    VALUES (@e, @t, @s1, @s2, @s3, @img, @cat)";
 
                     using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
                     {
@@ -58,7 +55,7 @@ namespace KelimeEzberApp
                         cmd.Parameters.AddWithValue("@s1", txtSentence1.Text.Trim());
                         cmd.Parameters.AddWithValue("@s2", txtSentence2.Text.Trim());
                         cmd.Parameters.AddWithValue("@s3", txtSentence3.Text.Trim());
-                        cmd.Parameters.AddWithValue("@img", pbImage.ImageLocation ?? "");
+                        cmd.Parameters.AddWithValue("@img", imagePath);
                         cmd.Parameters.AddWithValue("@cat", cmbCategory.SelectedItem.ToString());
 
                         cmd.ExecuteNonQuery();
@@ -71,13 +68,6 @@ namespace KelimeEzberApp
             {
                 MessageBox.Show("HATA: " + ex.Message);
             }
-        }
-
-        private void btnStartTest_Click(object sender, EventArgs e)
-        {
-            FormTest testForm = new FormTest();
-            testForm.Show();
-            this.Hide();
         }
 
         private void btnSelectImage_Click(object sender, EventArgs e)

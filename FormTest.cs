@@ -46,11 +46,13 @@ namespace KelimeEzberApp
         private List<int> GetTodayTestWordIds()
         {
             int dailyLimit = GetCurrentDailyLimit();
-            List<int> wordIds = new List<int>();
+            HashSet<int> selectedWordIds = new HashSet<int>();
             string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
+
                 string query = @"
                 SELECT WP.WordId, WP.ProgressStep, WP.LastCorrectDate
                 FROM WordProgress WP
@@ -61,7 +63,7 @@ namespace KelimeEzberApp
                     cmd.Parameters.AddWithValue("@u", userId);
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        while (reader.Read() && selectedWordIds.Count < dailyLimit)
                         {
                             int wordId = Convert.ToInt32(reader["WordId"]);
                             int step = Convert.ToInt32(reader["ProgressStep"]);
@@ -75,20 +77,44 @@ namespace KelimeEzberApp
                                 SELECT COUNT(DISTINCT date(CorrectDate)) 
                                 FROM WordCorrectHistory 
                                 WHERE UserId = @u AND WordId = @w";
+
                                 using (SQLiteCommand checkCmd = new SQLiteCommand(checkQuery, conn))
                                 {
                                     checkCmd.Parameters.AddWithValue("@u", userId);
                                     checkCmd.Parameters.AddWithValue("@w", wordId);
                                     int count = Convert.ToInt32(checkCmd.ExecuteScalar());
-                                    if (count < 6 && !todaysWords.Contains(wordId))
-                                        wordIds.Add(wordId);
+
+                                    if (count < 6 && !selectedWordIds.Contains(wordId))
+                                        selectedWordIds.Add(wordId);
                                 }
                             }
                         }
                     }
                 }
+
+                if (selectedWordIds.Count < dailyLimit)
+                {
+                    string fillQuery = @"
+                    SELECT Id FROM Words 
+                    WHERE Id NOT IN (" + string.Join(",", selectedWordIds.DefaultIfEmpty(-1)) + @")
+                    ORDER BY RANDOM() LIMIT @kalan";
+
+                    using (SQLiteCommand cmd = new SQLiteCommand(fillQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@kalan", dailyLimit - selectedWordIds.Count);
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int id = Convert.ToInt32(reader["Id"]);
+                                selectedWordIds.Add(id);
+                            }
+                        }
+                    }
+                }
             }
-            return wordIds.OrderBy(x => Guid.NewGuid()).Take(dailyLimit).ToList();
+
+            return selectedWordIds.OrderBy(x => Guid.NewGuid()).ToList();
         }
 
         private void LoadNewQuestion()
@@ -186,7 +212,7 @@ namespace KelimeEzberApp
                 {
                     reader.Close();
                     string update = correct
-                        ? "UPDATE WordProgress SET ProgressStep = ProgressStep + 1, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w"
+                        ? "UPDATE WordProgress SET ProgressStep = ProgressStep + 1, CorrectCount = CorrectCount + 1, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w"
                         : "UPDATE WordProgress SET ProgressStep = 0, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w";
 
                     SQLiteCommand updateCmd = new SQLiteCommand(update, conn);
@@ -197,11 +223,12 @@ namespace KelimeEzberApp
                 else
                 {
                     reader.Close();
-                    string insert = "INSERT INTO WordProgress (UserId, WordId, ProgressStep, LastCorrectDate) VALUES (@u, @w, @c, CURRENT_TIMESTAMP)";
+                    string insert = "INSERT INTO WordProgress (UserId, WordId, ProgressStep, CorrectCount, LastCorrectDate) VALUES (@u, @w, @c, @cc, CURRENT_TIMESTAMP)";
                     SQLiteCommand insertCmd = new SQLiteCommand(insert, conn);
                     insertCmd.Parameters.AddWithValue("@u", userId);
                     insertCmd.Parameters.AddWithValue("@w", currentWordId);
                     insertCmd.Parameters.AddWithValue("@c", correct ? 1 : 0);
+                    insertCmd.Parameters.AddWithValue("@cc", correct ? 1 : 0);
                     insertCmd.ExecuteNonQuery();
                 }
 
@@ -220,17 +247,26 @@ namespace KelimeEzberApp
         private void btnOptionB_Click(object sender, EventArgs e) => CheckAnswer(btnOptionB.Text);
         private void btnOptionC_Click(object sender, EventArgs e) => CheckAnswer(btnOptionC.Text);
         private void btnOptionD_Click(object sender, EventArgs e) => CheckAnswer(btnOptionD.Text);
-        private void btnNext_Click(object sender, EventArgs e) { lblFeedback.Text = ""; LoadNewQuestion(); }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            lblFeedback.Text = "";
+            LoadNewQuestion();
+        }
+
         private void btnSettings_Click(object sender, EventArgs e)
         {
             FormSettings f = new FormSettings();
             f.ShowDialog();
-            LoadNewQuestion(); // ayar değişmiş olabilir
+
+            // ✅ Test güncellenmeden önce eski günlük ID'leri sıfırlansın
+            todaysWords.Clear();
+
+            LoadNewQuestion();
         }
-    
-    private void button1_Click(object sender, EventArgs e)
+
+        private void button1_Click(object sender, EventArgs e)
         {
-            // Anasayfa veya kelime ekleme ekranına dön
             FormKelimeEkle form2 = new FormKelimeEkle();
             form2.Show();
             this.Hide();
@@ -238,16 +274,14 @@ namespace KelimeEzberApp
 
         private void btnProgress_Click(object sender, EventArgs e)
         {
-            // Öğrencinin ilerlemesini göster
             FormProgress form = new FormProgress();
             form.ShowDialog();
         }
 
         private void btnReport_Click(object sender, EventArgs e)
         {
-            // Analiz raporu formunu göster
             FormRapor form = new FormRapor();
             form.ShowDialog();
         }
     }
-   }
+}
