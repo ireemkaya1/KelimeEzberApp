@@ -6,12 +6,12 @@
 
 ## 🚀 Özellikler
 
-- ✅ Kullanıcı kayıt, giriş ve şifre sıfırlama ekranları
-- ✅ Kelime ekleme (İngilizce, Türkçe, örnek cümle, görsel ve ses dosyası)
-- ✅ 6 aşamalı tekrar prensibine dayalı sınav modülü
-- ✅ Günlük testte çıkacak yeni kelime sayısını ayarlama (ayarlar ekranı)
-- ✅ Başarı oranı ve kategori bazlı analiz raporu (PDF çıktısı alınabilir)
-- ✅ Puzzle ve Hafıza Çivisi gibi oyunlaştırma modülleri
+- ✅ Kullanıcı kayıt, giriş ve şifre sıfırlama ekranları.
+- ✅ Kelime ekleme (İngilizce, Türkçe, örnek cümle, görsel ve ses dosyası).
+- ✅ 6 aşamalı tekrar prensibine dayalı sınav modülü.
+- ✅ Günlük testte çıkacak yeni kelime sayısını ayarlama (ayarlar ekranı).
+- ✅ Başarı oranı ve kategori bazlı analiz raporu (PDF çıktısı alınabilir).
+- ✅ Puzzle ve Hafıza Çivisi gibi oyunlaştırma modülleri.
 
 ---
 
