@@ -282,6 +282,10 @@ namespace KelimeEzberApp
         {
             FormRapor form = new FormRapor();
             form.ShowDialog();
+            public void TestMetodu()
+            {
+            Console.WriteLine("Test metodu çalıştı.");
+            }
         }
     }
 }
