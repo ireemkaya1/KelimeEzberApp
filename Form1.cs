@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
+// Bu satır test amaçlı eklenmiştir.
 
 namespace KelimeEzberApp
 {
@@ -116,4 +117,4 @@ namespace KelimeEzberApp
             }
         }
     }
-}
+} 
