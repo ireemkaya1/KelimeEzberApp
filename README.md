@@ -30,14 +30,14 @@
 
 ## 🛠 Kurulum
 
-1. Bu projeyi klonlayın:
+1. Bu projeyi başka bir bilgisayara aktarıp kullanabilmek için klonla:
    ```bash
    git clone https://github.com/ireemkaya1/KelimeEzberApp.git
    ```
 
-2. Visual Studio ile açın ve `Form1.cs` üzerinden başlatın.
+2. Visual Studio ile kodu aç ve `Form1.cs` üzerinden başlat.
 
-3. `SQLite` bağlantı dosyasının yolunu kontrol edin ve gerekirse güncelleyin.
+3. `SQLite` bağlantı dosyasının yolunu kontrol et ve gerekirse güncelle.
 
 ---
 
