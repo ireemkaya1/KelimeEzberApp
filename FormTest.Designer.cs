@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTest));
             this.lblQuestion = new System.Windows.Forms.Label();
             this.btnOptionA = new System.Windows.Forms.Button();
             this.btnOptionB = new System.Windows.Forms.Button();
@@ -35,7 +36,6 @@
             this.btnOptionD = new System.Windows.Forms.Button();
             this.lblFeedback = new System.Windows.Forms.Label();
             this.btnNext = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.pbWordImage = new System.Windows.Forms.PictureBox();
             this.btnProgress = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
@@ -46,16 +46,19 @@
             // lblQuestion
             // 
             this.lblQuestion.AutoSize = true;
-            this.lblQuestion.Location = new System.Drawing.Point(102, 93);
+            this.lblQuestion.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblQuestion.Location = new System.Drawing.Point(342, 221);
+            this.lblQuestion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblQuestion.Name = "lblQuestion";
-            this.lblQuestion.Size = new System.Drawing.Size(0, 13);
+            this.lblQuestion.Size = new System.Drawing.Size(0, 21);
             this.lblQuestion.TabIndex = 0;
             // 
             // btnOptionA
             // 
-            this.btnOptionA.Location = new System.Drawing.Point(95, 149);
+            this.btnOptionA.Location = new System.Drawing.Point(362, 253);
+            this.btnOptionA.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOptionA.Name = "btnOptionA";
-            this.btnOptionA.Size = new System.Drawing.Size(75, 23);
+            this.btnOptionA.Size = new System.Drawing.Size(112, 37);
             this.btnOptionA.TabIndex = 1;
             this.btnOptionA.Text = "A şıkkı";
             this.btnOptionA.UseVisualStyleBackColor = true;
@@ -63,9 +66,11 @@
             // 
             // btnOptionB
             // 
-            this.btnOptionB.Location = new System.Drawing.Point(193, 149);
+            this.btnOptionB.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnOptionB.Location = new System.Drawing.Point(510, 253);
+            this.btnOptionB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOptionB.Name = "btnOptionB";
-            this.btnOptionB.Size = new System.Drawing.Size(75, 23);
+            this.btnOptionB.Size = new System.Drawing.Size(112, 37);
             this.btnOptionB.TabIndex = 1;
             this.btnOptionB.Text = "B şıkkı";
             this.btnOptionB.UseVisualStyleBackColor = true;
@@ -73,9 +78,10 @@
             // 
             // btnOptionC
             // 
-            this.btnOptionC.Location = new System.Drawing.Point(95, 178);
+            this.btnOptionC.Location = new System.Drawing.Point(362, 300);
+            this.btnOptionC.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOptionC.Name = "btnOptionC";
-            this.btnOptionC.Size = new System.Drawing.Size(75, 23);
+            this.btnOptionC.Size = new System.Drawing.Size(112, 37);
             this.btnOptionC.TabIndex = 1;
             this.btnOptionC.Text = "C şıkkı";
             this.btnOptionC.UseVisualStyleBackColor = true;
@@ -83,9 +89,11 @@
             // 
             // btnOptionD
             // 
-            this.btnOptionD.Location = new System.Drawing.Point(193, 178);
+            this.btnOptionD.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnOptionD.Location = new System.Drawing.Point(510, 300);
+            this.btnOptionD.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOptionD.Name = "btnOptionD";
-            this.btnOptionD.Size = new System.Drawing.Size(75, 23);
+            this.btnOptionD.Size = new System.Drawing.Size(112, 37);
             this.btnOptionD.TabIndex = 1;
             this.btnOptionD.Text = "D şıkkı";
             this.btnOptionD.UseVisualStyleBackColor = true;
@@ -94,45 +102,42 @@
             // lblFeedback
             // 
             this.lblFeedback.AutoSize = true;
-            this.lblFeedback.Location = new System.Drawing.Point(102, 253);
+            this.lblFeedback.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblFeedback.Location = new System.Drawing.Point(368, 382);
+            this.lblFeedback.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFeedback.Name = "lblFeedback";
-            this.lblFeedback.Size = new System.Drawing.Size(0, 13);
+            this.lblFeedback.Size = new System.Drawing.Size(0, 21);
             this.lblFeedback.TabIndex = 0;
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(396, 296);
+            this.btnNext.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnNext.Location = new System.Drawing.Point(659, 266);
+            this.btnNext.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(76, 36);
+            this.btnNext.Size = new System.Drawing.Size(114, 58);
             this.btnNext.TabIndex = 1;
             this.btnNext.Text = "Sonraki Soru\t";
             this.btnNext.UseVisualStyleBackColor = true;
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(304, 296);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(76, 36);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Geri Dön\t";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // pbWordImage
             // 
-            this.pbWordImage.Location = new System.Drawing.Point(342, 93);
+            this.pbWordImage.Location = new System.Drawing.Point(346, 18);
+            this.pbWordImage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pbWordImage.Name = "pbWordImage";
-            this.pbWordImage.Size = new System.Drawing.Size(100, 50);
+            this.pbWordImage.Size = new System.Drawing.Size(290, 174);
             this.pbWordImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbWordImage.TabIndex = 2;
             this.pbWordImage.TabStop = false;
             // 
             // btnProgress
             // 
-            this.btnProgress.Location = new System.Drawing.Point(337, 351);
+            this.btnProgress.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnProgress.Location = new System.Drawing.Point(584, 454);
+            this.btnProgress.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnProgress.Name = "btnProgress";
-            this.btnProgress.Size = new System.Drawing.Size(106, 36);
+            this.btnProgress.Size = new System.Drawing.Size(159, 58);
             this.btnProgress.TabIndex = 1;
             this.btnProgress.Text = "İlerlemeyi Göster";
             this.btnProgress.UseVisualStyleBackColor = true;
@@ -140,9 +145,11 @@
             // 
             // btnSettings
             // 
-            this.btnSettings.Location = new System.Drawing.Point(575, 12);
+            this.btnSettings.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnSettings.Location = new System.Drawing.Point(780, 18);
+            this.btnSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(47, 43);
+            this.btnSettings.Size = new System.Drawing.Size(103, 69);
             this.btnSettings.TabIndex = 1;
             this.btnSettings.Text = "Ayarlar ⚙️\n";
             this.btnSettings.UseVisualStyleBackColor = true;
@@ -150,9 +157,11 @@
             // 
             // btnReport
             // 
-            this.btnReport.Location = new System.Drawing.Point(449, 351);
+            this.btnReport.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnReport.Location = new System.Drawing.Point(765, 454);
+            this.btnReport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnReport.Name = "btnReport";
-            this.btnReport.Size = new System.Drawing.Size(110, 36);
+            this.btnReport.Size = new System.Drawing.Size(165, 58);
             this.btnReport.TabIndex = 1;
             this.btnReport.Text = "📊 Rapor";
             this.btnReport.UseVisualStyleBackColor = true;
@@ -160,11 +169,11 @@
             // 
             // FormTest
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(637, 405);
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.ClientSize = new System.Drawing.Size(956, 654);
             this.Controls.Add(this.pbWordImage);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnReport);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnProgress);
@@ -175,6 +184,8 @@
             this.Controls.Add(this.btnOptionA);
             this.Controls.Add(this.lblFeedback);
             this.Controls.Add(this.lblQuestion);
+            this.Font = new System.Drawing.Font("Cascadia Mono", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FormTest";
             this.Text = "FormTest";
             this.Load += new System.EventHandler(this.FormTest_Load);
@@ -193,7 +204,6 @@
         private System.Windows.Forms.Button btnOptionD;
         private System.Windows.Forms.Label lblFeedback;
         private System.Windows.Forms.Button btnNext;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pbWordImage;
         private System.Windows.Forms.Button btnProgress;
         private System.Windows.Forms.Button btnSettings;

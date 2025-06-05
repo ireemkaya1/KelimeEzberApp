@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Data.SQLite;
+<<<<<<< HEAD
 // Bu satır test amaçlı eklenmiştir.
+=======
+using System.Windows.Forms;
+>>>>>>> fc1735a (son dosyalar eklendi)
 
 namespace KelimeEzberApp
 {
@@ -24,6 +20,59 @@ namespace KelimeEzberApp
             txtUsername.Focus();
         }
 
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            string kullanici = txtUsername.Text.Trim();
+            string sifre = txtPassword.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(kullanici) || string.IsNullOrWhiteSpace(sifre))
+            {
+                MessageBox.Show("Kullanıcı adı ve şifre boş olamaz.");
+                return;
+            }
+
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
+            using (SQLiteConnection conn = new SQLiteConnection(connStr))
+            {
+                conn.Open();
+                string query = "SELECT * FROM Users WHERE Username=@u AND Password=@p";
+                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@u", kullanici);
+                    cmd.Parameters.AddWithValue("@p", sifre);
+
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            MessageBox.Show("Giriş başarılı!");
+
+                            this.Hide();
+
+                            if (kullanici == "admin")
+                            {
+                                FormKelimeEkle adminForm = new FormKelimeEkle();
+                                adminForm.KullaniciRol = "admin"; // İstersen kaldır
+                                adminForm.ShowDialog();
+                            }
+                            else
+                            {
+                                FormTest testForm = new FormTest();
+                                testForm.ShowDialog();
+                            }
+
+                            this.Show();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Kullanıcı adı veya şifre hatalı.");
+                        }
+                    }
+                }
+            }
+        }
+
+
         private void btnRegister_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtUsername.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
@@ -32,59 +81,29 @@ namespace KelimeEzberApp
                 return;
             }
 
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
-                string query = "SELECT * FROM Users WHERE Username=@u AND Password=@p";
-
-                SQLiteCommand cmd = new SQLiteCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", txtUsername.Text);
-                cmd.Parameters.AddWithValue("@p", txtPassword.Text);
-                cmd.ExecuteNonQuery();
-                MessageBox.Show("Kayıt başarılı!");
-            }
-        }
-
-        private void btnLogin_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtUsername.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
-            {
-                MessageBox.Show("Kullanıcı adı ve şifre boş olamaz.");
-                return;
-            }
-
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
-            using (SQLiteConnection conn = new SQLiteConnection(connStr))
-            {
-                conn.Open();
-                string query = "SELECT * FROM Users WHERE Username=@u AND Password=@p";
-                SQLiteCommand cmd = new SQLiteCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", txtUsername.Text);
-                cmd.Parameters.AddWithValue("@p", txtPassword.Text);
-
-                SQLiteDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                string kontrolQuery = "SELECT COUNT(*) FROM Users WHERE Username=@u";
+                using (var kontrolCmd = new SQLiteCommand(kontrolQuery, conn))
                 {
-                    string role = reader["Role"].ToString();
-                    MessageBox.Show("Giriş başarılı!");
-
-                    if (role == "admin")
+                    kontrolCmd.Parameters.AddWithValue("@u", txtUsername.Text);
+                    long count = (long)kontrolCmd.ExecuteScalar();
+                    if (count > 0)
                     {
-                        FormKelimeEkle formAdmin = new FormKelimeEkle();
-                        formAdmin.KullaniciRol = role;
-                        formAdmin.Show();
+                        MessageBox.Show("Bu kullanıcı adı zaten alınmış.");
+                        return;
                     }
-                    else
-                    {
-                        FormTest formOgrenci = new FormTest();
-                        formOgrenci.Show();
-                    }
-                    this.Hide();
                 }
-                else
+
+                string insertQuery = "INSERT INTO Users (Username, Password, Role) VALUES (@u, @p, 'user')";
+                using (SQLiteCommand cmd = new SQLiteCommand(insertQuery, conn))
                 {
-                    MessageBox.Show("Kullanıcı adı veya şifre hatalı.");
+                    cmd.Parameters.AddWithValue("@u", txtUsername.Text);
+                    cmd.Parameters.AddWithValue("@p", txtPassword.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Kayıt başarılı!");
                 }
             }
         }
@@ -97,22 +116,20 @@ namespace KelimeEzberApp
                 return;
             }
 
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
                 string query = "SELECT Password FROM Users WHERE Username = @u";
-                SQLiteCommand cmd = new SQLiteCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", txtUsername.Text);
+                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@u", txtUsername.Text);
+                    object result = cmd.ExecuteScalar();
 
-                object result = cmd.ExecuteScalar();
-                if (result != null)
-                {
-                    MessageBox.Show("Şifreniz: " + result.ToString());
-                }
-                else
-                {
-                    MessageBox.Show("Bu kullanıcı adı bulunamadı.");
+                    if (result != null)
+                        MessageBox.Show("Şifreniz: " + result.ToString());
+                    else
+                        MessageBox.Show("Bu kullanıcı adı bulunamadı.");
                 }
             }
         }

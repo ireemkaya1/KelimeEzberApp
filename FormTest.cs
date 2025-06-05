@@ -20,6 +20,8 @@ namespace KelimeEzberApp
         string correctAnswer = "";
         Random rnd = new Random();
         private HashSet<int> todaysWords = new HashSet<int>();
+        private int totalQuestionsAsked = 0;
+        private bool testFinished = false;
 
         private void FormTest_Load(object sender, EventArgs e)
         {
@@ -29,16 +31,17 @@ namespace KelimeEzberApp
         private int GetCurrentDailyLimit()
         {
             int dailyLimit = 10;
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
-                string q = "SELECT DailyNewWordLimit FROM Settings WHERE UserId = @u";
-                SQLiteCommand cmd = new SQLiteCommand(q, conn);
-                cmd.Parameters.AddWithValue("@u", userId);
-                object result = cmd.ExecuteScalar();
-                if (result != null)
-                    dailyLimit = Convert.ToInt32(result);
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT DailyNewWordLimit FROM Settings WHERE UserId = @u", conn))
+                {
+                    cmd.Parameters.AddWithValue("@u", userId);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                        dailyLimit = Convert.ToInt32(result);
+                }
             }
             return dailyLimit;
         }
@@ -47,7 +50,7 @@ namespace KelimeEzberApp
         {
             int dailyLimit = GetCurrentDailyLimit();
             HashSet<int> selectedWordIds = new HashSet<int>();
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
 
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
@@ -73,17 +76,14 @@ namespace KelimeEzberApp
 
                             if (daysSinceLast >= requiredDelays[step])
                             {
-                                string checkQuery = @"
+                                using (SQLiteCommand checkCmd = new SQLiteCommand(@"
                                 SELECT COUNT(DISTINCT date(CorrectDate)) 
                                 FROM WordCorrectHistory 
-                                WHERE UserId = @u AND WordId = @w";
-
-                                using (SQLiteCommand checkCmd = new SQLiteCommand(checkQuery, conn))
+                                WHERE UserId = @u AND WordId = @w", conn))
                                 {
                                     checkCmd.Parameters.AddWithValue("@u", userId);
                                     checkCmd.Parameters.AddWithValue("@w", wordId);
                                     int count = Convert.ToInt32(checkCmd.ExecuteScalar());
-
                                     if (count < 6 && !selectedWordIds.Contains(wordId))
                                         selectedWordIds.Add(wordId);
                                 }
@@ -119,12 +119,15 @@ namespace KelimeEzberApp
 
         private void LoadNewQuestion()
         {
+            if (testFinished) return;
+
             int dailyLimit = GetCurrentDailyLimit();
             var todayWordIds = GetTodayTestWordIds();
 
-            if (todayWordIds.Count == 0 || todaysWords.Count >= dailyLimit)
+            if (todayWordIds.Count == 0 || todaysWords.Count >= dailyLimit || totalQuestionsAsked >= 10)
             {
                 MessageBox.Show("✅ Bugünkü test hakkınızı tamamladınız.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                testFinished = true;
                 return;
             }
 
@@ -132,57 +135,61 @@ namespace KelimeEzberApp
             while (todaysWords.Contains(randomId) && todaysWords.Count < todayWordIds.Count)
                 randomId = todayWordIds[rnd.Next(todayWordIds.Count)];
 
-            if (todaysWords.Contains(randomId))
-                return;
-
+            if (todaysWords.Contains(randomId)) return;
             todaysWords.Add(randomId);
+            totalQuestionsAsked++;
 
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
-                string getWord = "SELECT * FROM Words WHERE Id = @id";
-                SQLiteCommand cmd = new SQLiteCommand(getWord, conn);
-                cmd.Parameters.AddWithValue("@id", randomId);
-                var reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Words WHERE Id = @id", conn))
                 {
-                    currentWordId = Convert.ToInt32(reader["Id"]);
-                    correctAnswer = reader["Turkish"].ToString();
-                    lblQuestion.Text = $"'{reader["English"]}' kelimesinin Türkçesi nedir?";
-
-                    string imgPath = reader["ImagePath"].ToString();
-                    string fullPath = Path.Combine(Application.StartupPath, imgPath);
-                    pbWordImage.ImageLocation = File.Exists(fullPath) ? fullPath : null;
-
-                    reader.Close();
-
-                    List<string> options = new List<string> { correctAnswer };
-                    string getWrong = "SELECT Turkish FROM Words WHERE Id != @id ORDER BY RANDOM() LIMIT 3";
-                    SQLiteCommand wrongCmd = new SQLiteCommand(getWrong, conn);
-                    wrongCmd.Parameters.AddWithValue("@id", currentWordId);
-                    var wrongReader = wrongCmd.ExecuteReader();
-                    while (wrongReader.Read())
-                        options.Add(wrongReader["Turkish"].ToString());
-                    wrongReader.Close();
-
-                    options = options.OrderBy(x => rnd.Next()).ToList();
-                    if (options.Count < 4)
+                    cmd.Parameters.AddWithValue("@id", randomId);
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        MessageBox.Show("Test için en az 4 kelime eklemelisiniz.");
-                        return;
-                    }
+                        if (reader.Read())
+                        {
+                            currentWordId = Convert.ToInt32(reader["Id"]);
+                            correctAnswer = reader["Turkish"].ToString();
+                            lblQuestion.Text = $"'{reader["English"]}' kelimesinin Türkçesi nedir?";
 
-                    btnOptionA.Text = options[0];
-                    btnOptionB.Text = options[1];
-                    btnOptionC.Text = options[2];
-                    btnOptionD.Text = options[3];
+                            string imgPath = reader["ImagePath"].ToString();
+                            string fullPath = Path.Combine(Application.StartupPath, imgPath);
+                            pbWordImage.ImageLocation = File.Exists(fullPath) ? fullPath : null;
+
+                            List<string> options = new List<string> { correctAnswer };
+                            using (SQLiteCommand wrongCmd = new SQLiteCommand("SELECT Turkish FROM Words WHERE Id != @id ORDER BY RANDOM() LIMIT 3", conn))
+                            {
+                                wrongCmd.Parameters.AddWithValue("@id", currentWordId);
+                                using (SQLiteDataReader wrongReader = wrongCmd.ExecuteReader())
+                                {
+                                    while (wrongReader.Read())
+                                        options.Add(wrongReader["Turkish"].ToString());
+                                }
+                            }
+
+                            options = options.OrderBy(x => rnd.Next()).ToList();
+                            if (options.Count < 4)
+                            {
+                                MessageBox.Show("Test için en az 4 kelime eklemelisiniz.");
+                                return;
+                            }
+
+                            btnOptionA.Text = options[0];
+                            btnOptionB.Text = options[1];
+                            btnOptionC.Text = options[2];
+                            btnOptionD.Text = options[3];
+                        }
+                    }
                 }
             }
         }
 
         private void CheckAnswer(string selected)
         {
+            if (testFinished) return;
+
             if (selected == correctAnswer)
             {
                 lblFeedback.Text = "✅ Doğru!";
@@ -197,48 +204,57 @@ namespace KelimeEzberApp
 
         private void UpdateProgress(bool correct)
         {
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
             using (SQLiteConnection conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
 
-                string checkQuery = "SELECT * FROM WordProgress WHERE UserId=@u AND WordId=@w";
-                SQLiteCommand checkCmd = new SQLiteCommand(checkQuery, conn);
-                checkCmd.Parameters.AddWithValue("@u", userId);
-                checkCmd.Parameters.AddWithValue("@w", currentWordId);
-                var reader = checkCmd.ExecuteReader();
-
-                if (reader.Read())
+                using (SQLiteCommand checkCmd = new SQLiteCommand("SELECT * FROM WordProgress WHERE UserId=@u AND WordId=@w", conn))
                 {
-                    reader.Close();
-                    string update = correct
-                        ? "UPDATE WordProgress SET ProgressStep = ProgressStep + 1, CorrectCount = CorrectCount + 1, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w"
-                        : "UPDATE WordProgress SET ProgressStep = 0, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w";
+                    checkCmd.Parameters.AddWithValue("@u", userId);
+                    checkCmd.Parameters.AddWithValue("@w", currentWordId);
 
-                    SQLiteCommand updateCmd = new SQLiteCommand(update, conn);
-                    updateCmd.Parameters.AddWithValue("@u", userId);
-                    updateCmd.Parameters.AddWithValue("@w", currentWordId);
-                    updateCmd.ExecuteNonQuery();
-                }
-                else
-                {
-                    reader.Close();
-                    string insert = "INSERT INTO WordProgress (UserId, WordId, ProgressStep, CorrectCount, LastCorrectDate) VALUES (@u, @w, @c, @cc, CURRENT_TIMESTAMP)";
-                    SQLiteCommand insertCmd = new SQLiteCommand(insert, conn);
-                    insertCmd.Parameters.AddWithValue("@u", userId);
-                    insertCmd.Parameters.AddWithValue("@w", currentWordId);
-                    insertCmd.Parameters.AddWithValue("@c", correct ? 1 : 0);
-                    insertCmd.Parameters.AddWithValue("@cc", correct ? 1 : 0);
-                    insertCmd.ExecuteNonQuery();
+                    using (SQLiteDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        bool hasRow = reader.Read();
+                        reader.Close();
+
+                        if (hasRow)
+                        {
+                            string update = correct
+                                ? "UPDATE WordProgress SET ProgressStep = ProgressStep + 1, CorrectCount = CorrectCount + 1, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w"
+                                : "UPDATE WordProgress SET ProgressStep = 0, LastCorrectDate = CURRENT_TIMESTAMP WHERE UserId=@u AND WordId=@w";
+
+                            using (SQLiteCommand updateCmd = new SQLiteCommand(update, conn))
+                            {
+                                updateCmd.Parameters.AddWithValue("@u", userId);
+                                updateCmd.Parameters.AddWithValue("@w", currentWordId);
+                                updateCmd.ExecuteNonQuery();
+                            }
+                        }
+                        else
+                        {
+                            string insert = "INSERT INTO WordProgress (UserId, WordId, ProgressStep, CorrectCount, LastCorrectDate) VALUES (@u, @w, @c, @cc, CURRENT_TIMESTAMP)";
+                            using (SQLiteCommand insertCmd = new SQLiteCommand(insert, conn))
+                            {
+                                insertCmd.Parameters.AddWithValue("@u", userId);
+                                insertCmd.Parameters.AddWithValue("@w", currentWordId);
+                                insertCmd.Parameters.AddWithValue("@c", correct ? 1 : 0);
+                                insertCmd.Parameters.AddWithValue("@cc", correct ? 1 : 0);
+                                insertCmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
                 }
 
                 if (correct)
                 {
-                    string insertDateQuery = "INSERT INTO WordCorrectHistory (UserId, WordId, CorrectDate) VALUES (@u, @w, CURRENT_DATE)";
-                    SQLiteCommand cmdInsert = new SQLiteCommand(insertDateQuery, conn);
-                    cmdInsert.Parameters.AddWithValue("@u", userId);
-                    cmdInsert.Parameters.AddWithValue("@w", currentWordId);
-                    cmdInsert.ExecuteNonQuery();
+                    using (SQLiteCommand cmdInsert = new SQLiteCommand("INSERT INTO WordCorrectHistory (UserId, WordId, CorrectDate) VALUES (@u, @w, CURRENT_DATE)", conn))
+                    {
+                        cmdInsert.Parameters.AddWithValue("@u", userId);
+                        cmdInsert.Parameters.AddWithValue("@w", currentWordId);
+                        cmdInsert.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -258,18 +274,10 @@ namespace KelimeEzberApp
         {
             FormSettings f = new FormSettings();
             f.ShowDialog();
-
-            // ✅ Test güncellenmeden önce eski günlük ID'leri sıfırlansın
             todaysWords.Clear();
-
+            totalQuestionsAsked = 0;
+            testFinished = false;
             LoadNewQuestion();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            FormKelimeEkle form2 = new FormKelimeEkle();
-            form2.Show();
-            this.Hide();
         }
 
         private void btnProgress_Click(object sender, EventArgs e)

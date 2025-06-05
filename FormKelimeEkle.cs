@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace KelimeEzberApp
@@ -20,11 +21,7 @@ namespace KelimeEzberApp
             cmbCategory.Items.AddRange(new string[] { "Hayvanlar", "Fiiller", "Yiyecekler", "Teknoloji", "Doğa", "Genel" });
             cmbCategory.SelectedIndex = 0;
 
-            if (KullaniciRol != "admin")
-            {
-                MessageBox.Show("Bu bölüme sadece admin erişebilir!");
-                this.Close();
-            }
+           
         }
 
         private void btnSaveWord_Click(object sender, EventArgs e)
@@ -35,8 +32,8 @@ namespace KelimeEzberApp
                 return;
             }
 
-            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;";
-            string imagePath = pbImage.ImageLocation != null ? System.IO.Path.GetFileName(pbImage.ImageLocation) : "";
+            string connStr = $"Data Source={Application.StartupPath}\\kelime.db;Version=3;BusyTimeout=5000;";
+            string imagePath = pbImage.ImageLocation != null ? Path.GetFileName(pbImage.ImageLocation) : "";
 
             try
             {
@@ -45,8 +42,8 @@ namespace KelimeEzberApp
                     conn.Open();
 
                     string query = @"INSERT INTO Words 
-                                    (English, Turkish, Sentence1, Sentence2, Sentence3, ImagePath, Category) 
-                                    VALUES (@e, @t, @s1, @s2, @s3, @img, @cat)";
+                                     (English, Turkish, Sentence1, Sentence2, Sentence3, ImagePath, Category) 
+                                     VALUES (@e, @t, @s1, @s2, @s3, @img, @cat)";
 
                     using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
                     {
@@ -56,13 +53,26 @@ namespace KelimeEzberApp
                         cmd.Parameters.AddWithValue("@s2", txtSentence2.Text.Trim());
                         cmd.Parameters.AddWithValue("@s3", txtSentence3.Text.Trim());
                         cmd.Parameters.AddWithValue("@img", imagePath);
-                        cmd.Parameters.AddWithValue("@cat", cmbCategory.SelectedItem.ToString());
+                        cmd.Parameters.AddWithValue("@cat", cmbCategory.SelectedItem?.ToString() ?? "Genel");
 
                         cmd.ExecuteNonQuery();
                     }
-
-                    MessageBox.Show("Kelime başarıyla kaydedildi!");
                 }
+
+                MessageBox.Show("Kelime başarıyla kaydedildi!");
+
+                // Form alanlarını temizle
+                txtEnglish.Clear();
+                txtTurkish.Clear();
+                txtSentence1.Clear();
+                txtSentence2.Clear();
+                txtSentence3.Clear();
+                pbImage.ImageLocation = null;
+                cmbCategory.SelectedIndex = 0;
+            }
+            catch (SQLiteException sqlEx) when (sqlEx.Message.Contains("database is locked"))
+            {
+                MessageBox.Show("HATA: Veritabanı şu anda meşgul. Lütfen birkaç saniye sonra tekrar deneyin.");
             }
             catch (Exception ex)
             {
@@ -72,11 +82,13 @@ namespace KelimeEzberApp
 
         private void btnSelectImage_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Resim Dosyaları|*.jpg;*.png;*.jpeg";
-            if (ofd.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                pbImage.ImageLocation = ofd.FileName;
+                ofd.Filter = "Resim Dosyaları|*.jpg;*.png;*.jpeg";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    pbImage.ImageLocation = ofd.FileName;
+                }
             }
         }
     }
