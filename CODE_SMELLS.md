@@ -1,6 +1,6 @@
-# 📌 CODE_SMELLS Raporu – KelimeEzberApp
+# CODE_SMELLS Raporu – KelimeEzberApp
 
-Bu rapor, GitHub projesi [KelimeEzberApp](https://github.com/ireemkaya1/KelimeEzberApp) için manuel olarak yapılan code smells (kod kokuları) analizini içermektedir. Kod kalitesi, okunabilirlik ve sürdürülebilirlik açısından aşağıdaki iyileştirmelerin yapılması önerilmektedir.
+Bu rapor, GitHub projesi KelimeEzberApp için yapılan code smells (kod kokuları) analizini içermektedir. 
 
 ---
 
@@ -18,14 +18,14 @@ Tek bir metotta hem veritabanı bağlantısı kurulmuş hem UI güncellenmiş he
 ## 2. Sihirli Sayılar ve Sabitler
 
 **Örnek:**  
-```csharp
+
 int dailyLimit = 10;
-```
+
 
 **Sorun:** Sabitler doğrudan sayısal olarak kullanılmış ama bu kullanım da okunabilirliği düşürür.  
 
 **Öneri:**  
-```csharp
+
 const int DefaultDailyLimit = 10;
 ```  
 şeklinde kullanılması okunabilirlik açısından daha iyi olur.
@@ -44,8 +44,7 @@ Ortak bir `DatabaseHelper.cs` sınıfı oluşturulup bağlantılar merkezi hale 
 
 ## 4. Hard-Coded Dosya Yolları
 
-**Örnek:**  
-```csharp
+**Örnek:** 
 string imagePath = Application.StartupPath + "\\Resimler\\" + imageName;
 ```
 
@@ -53,7 +52,7 @@ string imagePath = Application.StartupPath + "\\Resimler\\" + imageName;
 
 **Öneri:**  
 `Path.Combine()` kullanılmalıdır:  
-```csharp
+
 Path.Combine(Application.StartupPath, "Resimler", imageName);
 ```
 
@@ -82,12 +81,11 @@ Hatalar loglanmalı ve kullanıcı bilgilendirilmelidir.
 ## 7. Yorum Eksikliği ve Anlamı Belirsiz Değişken Adları
 
 **Sorun:**  
-```csharp
+
 int id = reader.GetInt32(0);
 ```
 
 **Öneri:**  
-```csharp
 int wordId = reader.GetInt32(0);
 ```  
 şeklinde daha anlamlı isimler kullanılmalıdır. Bu şekilde kod daha anlamlı olur ve ne istediği daha belirli olur.
