@@ -22,9 +22,11 @@ namespace KelimeEzberApp
         private HashSet<int> todaysWords = new HashSet<int>();
         private int totalQuestionsAsked = 0;
         private bool testFinished = false;
+        private List<int> cachedTodayWordIds;
 
         private void FormTest_Load(object sender, EventArgs e)
         {
+            cachedTodayWordIds = GetTodayTestWordIds();
             LoadNewQuestion();
         }
 
@@ -122,18 +124,17 @@ namespace KelimeEzberApp
             if (testFinished) return;
 
             int dailyLimit = GetCurrentDailyLimit();
-            var todayWordIds = GetTodayTestWordIds();
 
-            if (todayWordIds.Count == 0 || todaysWords.Count >= dailyLimit || totalQuestionsAsked >= 10)
+            if (cachedTodayWordIds.Count == 0 || todaysWords.Count >= dailyLimit || totalQuestionsAsked >= dailyLimit)
             {
                 MessageBox.Show("✅ Bugünkü test hakkınızı tamamladınız.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 testFinished = true;
                 return;
             }
 
-            int randomId = todayWordIds[rnd.Next(todayWordIds.Count)];
-            while (todaysWords.Contains(randomId) && todaysWords.Count < todayWordIds.Count)
-                randomId = todayWordIds[rnd.Next(todayWordIds.Count)];
+            int randomId = cachedTodayWordIds[rnd.Next(cachedTodayWordIds.Count)];
+            while (todaysWords.Contains(randomId) && todaysWords.Count < cachedTodayWordIds.Count)
+                randomId = cachedTodayWordIds[rnd.Next(cachedTodayWordIds.Count)];
 
             if (todaysWords.Contains(randomId)) return;
             todaysWords.Add(randomId);
@@ -247,7 +248,7 @@ namespace KelimeEzberApp
                     }
                 }
 
-                if (correct)
+                if (correct)                                                                                                                                                                                
                 {
                     using (SQLiteCommand cmdInsert = new SQLiteCommand("INSERT INTO WordCorrectHistory (UserId, WordId, CorrectDate) VALUES (@u, @w, CURRENT_DATE)", conn))
                     {
@@ -277,6 +278,7 @@ namespace KelimeEzberApp
             todaysWords.Clear();
             totalQuestionsAsked = 0;
             testFinished = false;
+            cachedTodayWordIds = GetTodayTestWordIds();
             LoadNewQuestion();
         }
 
@@ -290,10 +292,11 @@ namespace KelimeEzberApp
         {
             FormRapor form = new FormRapor();
             form.ShowDialog();
-            public void TestMetodu()
-            {
+        }
+
+        public void TestMetodu()
+        {
             Console.WriteLine("Test metodu çalıştı.");
-            }
         }
     }
 }

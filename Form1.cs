@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
-<<<<<<< HEAD
-// Bu satır test amaçlı eklenmiştir.
-=======
+
 using System.Windows.Forms;
->>>>>>> fc1735a (son dosyalar eklendi)
 
 namespace KelimeEzberApp
 {
